@@ -1,0 +1,45 @@
+/*----This is a code that can be used to create a custom login page in ASP.NET using C#----*/
+public partial class Fin_LogIn : System.Web.UI.Page
+{
+    static string connString = "Data Source=(DESCRIPTION="
+                   + "(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=0.0.0.0)(PORT=1111)))"
+                   + "(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TESTING)));"
+       + "User Id=TEST;Password=TEST;";
+
+    OracleConnection connection = new OracleConnection(connString);
+    OracleCommand cmd = new OracleCommand();    
+    OracleDataReader dr;
+    
+    
+    
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        
+    }
+    protected void Login1_Authenticate(object sender, AuthenticateEventArgs e)
+    {
+        try
+        {
+            connection.Open();
+            cmd.Connection = connection;
+            cmd.CommandText = "select * from PASSWORD_TABLE where USERNAME =" + Login1.UserName + " AND PASSWORD='" + Login1.Password + "' ";
+            dr = cmd.ExecuteReader();
+            if (dr.HasRows)
+            {
+                dr.Read();
+                Session["EMP_NO"] = Login1.UserName;
+                Response.Redirect("EmpNo.aspx");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Response.Write(ex.Message);
+        }
+        finally
+        {
+            connection.Close();
+
+        }
+    }
+}

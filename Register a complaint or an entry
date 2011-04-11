@@ -1,0 +1,164 @@
+<%@ Page Language="C#" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<script runat="server">
+ protected void Page_PreInit(object sender, EventArgs e)
+    {
+        Label1.Text = Cache["data1"].ToString();
+        Label6.Text = Cache["data2"].ToString();
+    }
+    protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        HiddenField1.Value = DropDownList1.SelectedValue.ToString();
+        if (DropDownList1.SelectedValue.ToString() == "OTHER")
+        {
+            HiddenField1.Value = "";
+            Label3.Visible = true;
+            TextBox1.Enabled = true;
+            TextBox1.Visible = true;
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        if ((DropDownList1.SelectedValue == "OTHER") && (TextBox1.Text == ""))
+            TextBox1.Text = "OTHER";
+        SqlDataSource3.Insert();
+        string str1;
+        str1 = " ";
+        DataView ds = new DataView();
+        ds = (DataView)SqlDataSource3.Select(DataSourceSelectArguments.Empty);
+        foreach (DataRow dr in ds.Table.Rows)
+        {
+            str1 = dr[0].ToString();
+        }
+        Cache["complaintno"] = str1;
+        
+        Server.Transfer("Register2.aspx");
+        
+        
+    }
+
+</script>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Register - Complaint</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        &nbsp;
+        <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:complaintnewConnectionString %>"
+            ProviderName="<%$ ConnectionStrings:complaintnewConnectionString.ProviderName %>"
+            SelectCommand="SELECT [complain] FROM [comptype]"></asp:SqlDataSource>
+        <asp:LinkButton ID="LinkButton2" runat="server" OnClick="LinkButton2_Click" PostBackUrl="~/complaint.aspx"
+            Style="z-index: 112; left: 540px; position: absolute; top: 20px">Logout</asp:LinkButton>
+    
+    </div>
+        <br />
+        &nbsp;
+        &nbsp;<br />
+        &nbsp;<br />
+    <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <asp:Label ID="Label7" runat="server" Font-Bold="True" Font-Size="XX-Large" Height="60px"
+            Style="z-index: 105; left: 99px; position: absolute; top: 38px" Text="Register your complaint here"
+            Width="406px"></asp:Label>
+        <table style="border: medium groove #C0C0C0; width:568px; height: 165px;" 
+        frame="border">
+            <tr>
+                <td>
+        <asp:Label ID="Label4" runat="server" Style="z-index: 106; left: 125px; top: 151px" 
+                        Text="Seat No. :"></asp:Label>
+                </td>
+                <td>
+        <asp:Label ID="Label1" runat="server" 
+                        Style="z-index: 101; left: 216px; top: 21px; height: 26px; width: 129px;" 
+                        Text="Label"></asp:Label>
+                </td>
+                <td>
+                    &nbsp;</td>
+            </tr>
+            <tr>
+                <td>
+        <asp:Label ID="Label5" runat="server" Style="z-index: 108; left: 125px; top: 186px" 
+                        Text="Name :"></asp:Label>
+                </td>
+                <td>
+        <asp:Label ID="Label6" runat="server" Height="22px" Style="z-index: 109; left: 3px;
+            top: 2px; margin-top: 0px;" Text="Label" Width="199px"></asp:Label>
+                </td>
+                <td>
+                    &nbsp;</td>
+            </tr>
+            <tr>
+                <td>
+        <asp:Label ID="Label2" runat="server" Height="19px" Style="z-index: 103; left: 118px;
+            top: 222px" Text="Complain :" Width="85px"></asp:Label>
+                </td>
+                <td>
+        <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource2"
+            DataTextField="complain" DataValueField="complain" OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged"
+            Style="z-index: 102; left: 330px; top: 229px" 
+                        OnDataBound="DropDownList1_SelectedIndexChanged" Width="252px" 
+                        AutoPostBack="True">
+        </asp:DropDownList>
+                </td>
+                <td>
+                    &nbsp;</td>
+            </tr>
+            <tr><td>
+        <asp:Label ID="Label3" runat="server" Style="z-index: 110; left: 89px; top: 259px" 
+                    Text="Please specify :" Visible="False" EnableViewState="False"></asp:Label>
+                </td><td>
+        <asp:TextBox ID="TextBox1" runat="server" Height="22px" Style="z-index: 104;
+            left: 329px; top: 278px" TextMode="MultiLine"
+            Width="295px" Enabled="False" Visible="False" EnableViewState="False"></asp:TextBox>
+                </td><td></td></tr>
+    </table>
+        <br />
+        <br />
+        <asp:LinkButton ID="LinkButton1" runat="server" EnableViewState="False" PostBackUrl="~/Home.aspx"
+            Style="z-index: 107; left: 35px; position: absolute; top: 20px" ToolTip="Click to go back to the main complaint page">Home</asp:LinkButton>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+        <br />
+        <br />
+        <br />
+        &nbsp;
+        &nbsp;
+        <br />
+        <br />
+        <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:complaintnewConnectionString %>"
+            InsertCommand="INSERT INTO miscomp(name, dept, seatno, complain, status) VALUES (n1, 'Unknown', l1, c1 &amp; c2, 'Pending')"
+            ProviderName="<%$ ConnectionStrings:complaintnewConnectionString.ProviderName %>"
+            SelectCommand="SELECT srno FROM miscomp" >
+            <InsertParameters>
+                <asp:ControlParameter ControlID="Label6" Name="n1" PropertyName="Text" />
+                <asp:ControlParameter ControlID="Label1" Name="l1" PropertyName="Text" />
+                <asp:ControlParameter ControlID="HiddenField1" Name="c1" PropertyName="Value" />
+                <asp:ControlParameter ControlID="TextBox1" Name="c2" PropertyName="Text" />
+                
+            </InsertParameters>
+            
+            </asp:SqlDataSource>
+        &nbsp;
+        <asp:HiddenField ID="HiddenField1" runat="server" Visible="False" />
+        <br />
+        <br />
+        <br />
+        <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Style="z-index: 111;
+            left: 260px; position: absolute; top: 360px" Text="Submit" Height="24px" Width="60px" />
+        <br />
+        <br />
+        <br />
+        <br />
+    </form>
+</body>
+</html>
